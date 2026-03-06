@@ -9,11 +9,11 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.ImageReader;
 import android.media.MediaRecorder;
-import android.net.wifi.WifiManager;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.text.format.Formatter;
 import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
@@ -86,9 +86,7 @@ public class ServerActivity extends AppCompatActivity {
         // Ocultar botón si solo hay una cámara
         if (cameraIds.length <= 1) btnSwitchCamera.setVisibility(android.view.View.GONE);
 
-        WifiManager wm = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-        String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
-        tvIp.setText("IP: " + ip + "\nPuertos: " + PORT_AUDIO + " / " + PORT_VIDEO);
+        tvIp.setText("IP: " + GetIP.getLocalIP() + "\nPuertos: " + PORT_AUDIO + " / " + PORT_VIDEO);
 
         btnToggle.setOnClickListener(v -> {
             if (isStreaming) stopStreaming();
