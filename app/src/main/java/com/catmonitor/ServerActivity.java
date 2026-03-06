@@ -55,10 +55,13 @@ public class ServerActivity extends AppCompatActivity {
     private volatile OutputStream videoOutputStream;
 
     private boolean isStreaming = false;
+    private int currentCameraIndex = 0; // 0 = trasera, 1 = frontal
+    private String[] cameraIds;
 
     private TextView tvStatus;
     private TextView tvIp;
     private Button btnToggle;
+    private Button btnSwitchCamera;
     private TextureView textureView;
 
     @Override
@@ -66,30 +69,59 @@ public class ServerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server);
 
-        tvStatus   = findViewById(R.id.tvStatus);
-        tvIp       = findViewById(R.id.tvIp);
-        btnToggle  = findViewById(R.id.btnToggle);
-        textureView = findViewById(R.id.textureView);
+        tvStatus        = findViewById(R.id.tvStatus);
+        tvIp            = findViewById(R.id.tvIp);
+        btnToggle       = findViewById(R.id.btnToggle);
+        btnSwitchCamera = findViewById(R.id.btnSwitchCamera);
+        textureView     = findViewById(R.id.textureView);
+
+        // Obtener lista de cámaras disponibles
+        try {
+            CameraManager manager = (CameraManager) getSystemService(CAMERA_SERVICE);
+            cameraIds = manager.getCameraIdList();
+        } catch (CameraAccessException e) {
+            cameraIds = new String[]{"0"};
+        }
+
+        // Ocultar botón si solo hay una cámara
+        if (cameraIds.length <= 1) btnSwitchCamera.setVisibility(android.view.View.GONE);
 
         WifiManager wm = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
         String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
-        tvIp.setText("IP: " + ip + "\nPuertos: " + PORT_AUDIO + " (audio) / " + PORT_VIDEO + " (video)");
+        tvIp.setText("IP: " + ip + "\nPuertos: " + PORT_AUDIO + " / " + PORT_VIDEO);
 
         btnToggle.setOnClickListener(v -> {
             if (isStreaming) stopStreaming();
             else checkPermissionsAndStart();
         });
+
+        btnSwitchCamera.setOnClickListener(v -> switchCamera());
+    }
+
+    private void switchCamera() {
+        if (!isStreaming) {
+            currentCameraIndex = (currentCameraIndex + 1) % cameraIds.length;
+            btnSwitchCamera.setText(currentCameraIndex == 0 ? "📷 Frontal" : "📷 Trasera");
+            Toast.makeText(this, currentCameraIndex == 0 ? "Cámara trasera" : "Cámara frontal", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        // Si está transmitiendo, reinicia la cámara
+        try {
+            if (captureSession != null) { captureSession.close(); captureSession = null; }
+            if (cameraDevice != null) { cameraDevice.close(); cameraDevice = null; }
+            if (imageReader != null) { imageReader.close(); imageReader = null; }
+        } catch (Exception e) { e.printStackTrace(); }
+
+        currentCameraIndex = (currentCameraIndex + 1) % cameraIds.length;
+        btnSwitchCamera.setText(currentCameraIndex == 0 ? "📷 Frontal" : "📷 Trasera");
+        startCamera();
     }
 
     private void checkPermissionsAndStart() {
         String[] perms = {Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA};
         boolean allGranted = true;
-        for (String p : perms) {
-            if (ContextCompat.checkSelfPermission(this, p) != PackageManager.PERMISSION_GRANTED) {
-                allGranted = false;
-                break;
-            }
-        }
+        for (String p : perms)
+            if (ContextCompat.checkSelfPermission(this, p) != PackageManager.PERMISSION_GRANTED) { allGranted = false; break; }
         if (!allGranted) ActivityCompat.requestPermissions(this, perms, PERMISSION_CODE);
         else startStreaming();
     }
@@ -106,7 +138,7 @@ public class ServerActivity extends AppCompatActivity {
     private void startStreaming() {
         isStreaming = true;
         btnToggle.setText("⏹ Detener");
-        tvStatus.setText("⏳ Iniciando cámara y micrófono...");
+        tvStatus.setText("⏳ Iniciando...");
         startBackgroundThread();
         startAudioServer();
         startCamera();
@@ -117,9 +149,9 @@ public class ServerActivity extends AppCompatActivity {
         audioThread = new Thread(() -> {
             try {
                 audioServerSocket = new ServerSocket(PORT_AUDIO);
-                runOnUiThread(() -> tvStatus.setText("🟡 Esperando cliente de audio..."));
+                runOnUiThread(() -> tvStatus.setText("🟡 Esperando cliente..."));
                 Socket client = audioServerSocket.accept();
-                runOnUiThread(() -> tvStatus.setText("😺 ¡Conectado! Transmitiendo audio + video..."));
+                runOnUiThread(() -> tvStatus.setText("😺 ¡Conectado! Transmitiendo..."));
 
                 int bufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE,
                         AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT);
@@ -143,7 +175,6 @@ public class ServerActivity extends AppCompatActivity {
 
     // ───────── VIDEO ─────────
     private void startCamera() {
-        // Configurar ImageReader para capturar frames JPEG
         imageReader = ImageReader.newInstance(WIDTH, HEIGHT, ImageFormat.JPEG, 2);
         imageReader.setOnImageAvailableListener(reader -> {
             android.media.Image image = reader.acquireLatestImage();
@@ -153,30 +184,25 @@ public class ServerActivity extends AppCompatActivity {
                 byte[] bytes = new byte[buffer.remaining()];
                 buffer.get(bytes);
                 sendVideoFrame(bytes);
-            } finally {
-                image.close();
-            }
+            } finally { image.close(); }
         }, backgroundHandler);
 
-        // Abrir cámara
         CameraManager manager = (CameraManager) getSystemService(CAMERA_SERVICE);
         try {
-            String cameraId = manager.getCameraIdList()[0]; // cámara trasera
+            String cameraId = cameraIds[currentCameraIndex];
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                     == PackageManager.PERMISSION_GRANTED) {
                 manager.openCamera(cameraId, new CameraDevice.StateCallback() {
                     @Override public void onOpened(CameraDevice camera) {
                         cameraDevice = camera;
-                        startVideoServer();
+                        if (videoServerSocket == null) startVideoServer();
                         startPreview();
                     }
                     @Override public void onDisconnected(CameraDevice camera) { camera.close(); }
                     @Override public void onError(CameraDevice camera, int error) { camera.close(); }
                 }, backgroundHandler);
             }
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
+        } catch (CameraAccessException e) { e.printStackTrace(); }
     }
 
     private void startPreview() {
@@ -184,7 +210,7 @@ public class ServerActivity extends AppCompatActivity {
             SurfaceTexture texture = textureView.getSurfaceTexture();
             if (texture != null) texture.setDefaultBufferSize(WIDTH, HEIGHT);
             Surface previewSurface = texture != null ? new Surface(texture) : null;
-            Surface readerSurface = imageReader.getSurface();
+            Surface readerSurface  = imageReader.getSurface();
 
             CaptureRequest.Builder builder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             if (previewSurface != null) builder.addTarget(previewSurface);
@@ -213,9 +239,7 @@ public class ServerActivity extends AppCompatActivity {
                 videoServerSocket = new ServerSocket(PORT_VIDEO);
                 Socket client = videoServerSocket.accept();
                 videoOutputStream = client.getOutputStream();
-            } catch (Exception e) {
-                if (isStreaming) e.printStackTrace();
-            }
+            } catch (Exception e) { if (isStreaming) e.printStackTrace(); }
         });
         videoThread.start();
     }
@@ -223,7 +247,6 @@ public class ServerActivity extends AppCompatActivity {
     private void sendVideoFrame(byte[] jpegBytes) {
         if (videoOutputStream == null) return;
         try {
-            // Protocolo: 4 bytes tamaño + datos JPEG
             int len = jpegBytes.length;
             byte[] header = new byte[]{
                 (byte)(len >> 24), (byte)(len >> 16), (byte)(len >> 8), (byte)(len)
@@ -231,9 +254,7 @@ public class ServerActivity extends AppCompatActivity {
             videoOutputStream.write(header);
             videoOutputStream.write(jpegBytes);
             videoOutputStream.flush();
-        } catch (Exception e) {
-            videoOutputStream = null;
-        }
+        } catch (Exception e) { videoOutputStream = null; }
     }
 
     // ───────── STOP ─────────
@@ -248,6 +269,7 @@ public class ServerActivity extends AppCompatActivity {
             if (audioServerSocket != null && !audioServerSocket.isClosed()) audioServerSocket.close();
             if (videoServerSocket != null && !videoServerSocket.isClosed()) videoServerSocket.close();
             if (audioRecord != null) { audioRecord.stop(); audioRecord.release(); }
+            videoServerSocket = null;
         } catch (Exception e) { e.printStackTrace(); }
         stopBackgroundThread();
     }
