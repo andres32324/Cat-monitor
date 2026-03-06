@@ -4,6 +4,7 @@ plugins {
 
 android {
     compileSdk 34
+    namespace "com.catmonitor"
 
     defaultConfig {
         applicationId "com.catmonitor"
