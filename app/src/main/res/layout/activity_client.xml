@@ -31,27 +31,56 @@
         <ImageView
             android:id="@+id/ivVideo"
             android:layout_width="match_parent"
-            android:layout_height="240dp"
+            android:layout_height="220dp"
             android:background="#000000"
             android:scaleType="fitCenter"
             android:layout_marginBottom="16dp"/>
 
-        <!-- Estado -->
-        <TextView
-            android:id="@+id/tvStatus"
+        <!-- Selector Audio/Video -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Ingresa la IP y presiona Conectar"
-            android:textSize="13sp"
-            android:textColor="#CCCCFF"
-            android:gravity="center"
-            android:layout_marginBottom="16dp"/>
+            android:orientation="vertical"
+            android:background="#0F3460"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="¿Qué recibir?"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:layout_marginBottom="12dp"/>
+
+            <CheckBox
+                android:id="@+id/cbAudio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🎙️  Audio"
+                android:checked="true"
+                android:textColor="#FFFFFF"
+                android:buttonTint="#E94560"
+                android:textSize="15sp"
+                android:layout_marginBottom="8dp"/>
+
+            <CheckBox
+                android:id="@+id/cbVideo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📹  Video"
+                android:checked="true"
+                android:textColor="#FFFFFF"
+                android:buttonTint="#E94560"
+                android:textSize="15sp"/>
+        </LinearLayout>
 
         <!-- IP Input -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="IP del teléfono junto al gato:"
+            android:text="IP del teléfono emisor:"
             android:textSize="13sp"
             android:textColor="#AAAACC"
             android:layout_marginBottom="6dp"/>
@@ -84,12 +113,24 @@
             android:layout_height="wrap_content"
             android:progressTint="#E94560"
             android:thumbTint="#E94560"
-            android:layout_marginBottom="20dp"/>
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Estado -->
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Selecciona opciones y presiona Conectar"
+            android:textSize="13sp"
+            android:textColor="#CCCCFF"
+            android:gravity="center"
+            android:layout_marginBottom="16dp"
+            android:minHeight="40dp"/>
 
         <Button
             android:id="@+id/btnToggle"
             android:layout_width="220dp"
-            android:layout_height="56dp"
+            android:layout_height="52dp"
             android:text="▶ Conectar"
             android:textSize="16sp"
             android:backgroundTint="#0F3460"

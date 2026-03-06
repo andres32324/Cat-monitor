@@ -29,6 +29,8 @@ public class ClientActivity extends AppCompatActivity {
     private TextView tvStatus;
     private SeekBar seekVolume;
     private ImageView ivVideo;
+    private android.widget.CheckBox cbAudio;
+    private android.widget.CheckBox cbVideo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,8 @@ public class ClientActivity extends AppCompatActivity {
         tvStatus   = findViewById(R.id.tvStatus);
         seekVolume = findViewById(R.id.seekVolume);
         ivVideo    = findViewById(R.id.ivVideo);
+        cbAudio    = findViewById(R.id.cbAudio);
+        cbVideo    = findViewById(R.id.cbVideo);
 
         seekVolume.setMax(100);
         seekVolume.setProgress(80);
@@ -65,11 +69,16 @@ public class ClientActivity extends AppCompatActivity {
     }
 
     private void startListening(String ip) {
+        boolean wantAudio = cbAudio.isChecked();
+        boolean wantVideo = cbVideo.isChecked();
+        cbAudio.setEnabled(false);
+        cbVideo.setEnabled(false);
         isListening = true;
         btnToggle.setText("⏹ Detener");
         tvStatus.setText("⏳ Conectando...");
-        startAudioThread(ip);
-        startVideoThread(ip);
+        if (wantAudio) startAudioThread(ip);
+        if (wantVideo) startVideoThread(ip);
+        else ivVideo.setVisibility(android.view.View.GONE);
     }
 
     private void startAudioThread(String ip) {
@@ -140,6 +149,9 @@ public class ClientActivity extends AppCompatActivity {
         isListening = false;
         btnToggle.setText("▶ Conectar");
         tvStatus.setText("⏹ Desconectado");
+        cbAudio.setEnabled(true);
+        cbVideo.setEnabled(true);
+        ivVideo.setVisibility(android.view.View.VISIBLE);
         try {
             if (audioSocket != null && !audioSocket.isClosed()) audioSocket.close();
             if (videoSocket != null && !videoSocket.isClosed()) videoSocket.close();

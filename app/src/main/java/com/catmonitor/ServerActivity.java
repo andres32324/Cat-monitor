@@ -55,14 +55,18 @@ public class ServerActivity extends AppCompatActivity {
     private volatile OutputStream videoOutputStream;
 
     private boolean isStreaming = false;
-    private int currentCameraIndex = 0; // 0 = trasera, 1 = frontal
+    private int currentCameraIndex = 0;
     private String[] cameraIds;
+    private boolean sendAudio = true;
+    private boolean sendVideo = true;
 
     private TextView tvStatus;
     private TextView tvIp;
     private Button btnToggle;
     private Button btnSwitchCamera;
     private TextureView textureView;
+    private android.widget.CheckBox cbAudio;
+    private android.widget.CheckBox cbVideo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +78,16 @@ public class ServerActivity extends AppCompatActivity {
         btnToggle       = findViewById(R.id.btnToggle);
         btnSwitchCamera = findViewById(R.id.btnSwitchCamera);
         textureView     = findViewById(R.id.textureView);
+        cbAudio         = findViewById(R.id.cbAudio);
+        cbVideo         = findViewById(R.id.cbVideo);
+
+        // Iniciar foreground service para segundo plano
+        Intent serviceIntent = new Intent(this, AudioStreamService.class);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent);
+        } else {
+            startService(serviceIntent);
+        }
 
         // Obtener lista de cámaras disponibles
         try {
@@ -134,12 +148,17 @@ public class ServerActivity extends AppCompatActivity {
     }
 
     private void startStreaming() {
+        sendAudio = cbAudio.isChecked();
+        sendVideo = cbVideo.isChecked();
+        cbAudio.setEnabled(false);
+        cbVideo.setEnabled(false);
         isStreaming = true;
         btnToggle.setText("⏹ Detener");
         tvStatus.setText("⏳ Iniciando...");
         startBackgroundThread();
-        startAudioServer();
-        startCamera();
+        if (sendAudio) startAudioServer();
+        if (sendVideo) startCamera();
+        else tvStatus.setText("🟡 Esperando cliente (solo audio)...");
     }
 
     // ───────── AUDIO ─────────
@@ -260,6 +279,8 @@ public class ServerActivity extends AppCompatActivity {
         isStreaming = false;
         btnToggle.setText("▶ Iniciar");
         tvStatus.setText("⏹ Detenido");
+        cbAudio.setEnabled(true);
+        cbVideo.setEnabled(true);
         try {
             if (captureSession != null) { captureSession.close(); captureSession = null; }
             if (cameraDevice != null) { cameraDevice.close(); cameraDevice = null; }

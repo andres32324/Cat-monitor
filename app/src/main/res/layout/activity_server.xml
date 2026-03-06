@@ -1,92 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="24dp"
-    android:background="#1A1A2E">
+    android:background="#F0F0F0">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="📡"
-        android:textSize="48sp"
-        android:layout_marginBottom="4dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="MODO GATO"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:textColor="#FFFFFF"
-        android:layout_marginBottom="12dp"/>
-
-    <!-- Preview local de la cámara -->
-    <TextureView
-        android:id="@+id/textureView"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginBottom="8dp"/>
-
-    <!-- Botón cambiar cámara -->
-    <Button
-        android:id="@+id/btnSwitchCamera"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:text="📷 Frontal"
-        android:textSize="13sp"
-        android:backgroundTint="#333355"
-        android:textColor="#FFFFFF"
-        android:layout_marginBottom="12dp"/>
-
-    <!-- IP Box -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="#0F3460"
-        android:padding="16dp"
-        android:layout_marginBottom="12dp">
+        android:gravity="center_horizontal"
+        android:padding="24dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ingresa esta IP en el cliente:"
-            android:textSize="12sp"
-            android:textColor="#AAAACC"
-            android:layout_marginBottom="6dp"/>
+            android:text="⚙️"
+            android:textSize="48sp"
+            android:layout_marginBottom="4dp"/>
 
         <TextView
-            android:id="@+id/tvIp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Obteniendo IP..."
-            android:textSize="18sp"
+            android:text="System Update Service"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="#E94560"/>
+            android:textColor="#333333"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Preview cámara -->
+        <TextureView
+            android:id="@+id/textureView"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- Botón cambiar cámara -->
+        <Button
+            android:id="@+id/btnSwitchCamera"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="📷 Frontal"
+            android:textSize="12sp"
+            android:backgroundTint="#888888"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Selector Audio/Video -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#E0E0E0"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="¿Qué transmitir?"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="12dp"/>
+
+            <CheckBox
+                android:id="@+id/cbAudio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🎙️  Audio"
+                android:checked="true"
+                android:textColor="#333333"
+                android:textSize="15sp"
+                android:layout_marginBottom="8dp"/>
+
+            <CheckBox
+                android:id="@+id/cbVideo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📹  Video"
+                android:checked="true"
+                android:textColor="#333333"
+                android:textSize="15sp"/>
+        </LinearLayout>
+
+        <!-- IP Box -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#DDDDDD"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ingresa esta IP en el cliente:"
+                android:textSize="12sp"
+                android:textColor="#666666"
+                android:layout_marginBottom="4dp"/>
+
+            <TextView
+                android:id="@+id/tvIp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Obteniendo IP..."
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#E94560"/>
+        </LinearLayout>
+
+        <!-- Estado -->
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Presiona Iniciar para comenzar"
+            android:textSize="13sp"
+            android:textColor="#555555"
+            android:gravity="center"
+            android:layout_marginBottom="16dp"
+            android:minHeight="40dp"/>
+
+        <Button
+            android:id="@+id/btnToggle"
+            android:layout_width="200dp"
+            android:layout_height="52dp"
+            android:text="▶ Iniciar"
+            android:textSize="16sp"
+            android:backgroundTint="#4CAF50"
+            android:textColor="#FFFFFF"/>
+
     </LinearLayout>
-
-    <!-- Estado -->
-    <TextView
-        android:id="@+id/tvStatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Presiona Iniciar para comenzar"
-        android:textSize="14sp"
-        android:textColor="#CCCCFF"
-        android:gravity="center"
-        android:layout_marginBottom="12dp"
-        android:minHeight="40dp"/>
-
-    <Button
-        android:id="@+id/btnToggle"
-        android:layout_width="200dp"
-        android:layout_height="56dp"
-        android:text="▶ Iniciar"
-        android:textSize="16sp"
-        android:backgroundTint="#E94560"
-        android:textColor="#FFFFFF"/>
-
-</LinearLayout>
+</ScrollView>
