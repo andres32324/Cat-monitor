@@ -106,8 +106,18 @@ public class ClientActivity extends AppCompatActivity {
     private void startVideoThread(String ip) {
         videoThread = new Thread(() -> {
             try {
-                Thread.sleep(500);
-                videoSocket = new Socket(ip, PORT_VIDEO);
+                // Reintentar conexión video hasta 10 veces
+                int intentos = 0;
+                while (isListening && intentos < 10) {
+                    try {
+                        Thread.sleep(1000);
+                        videoSocket = new Socket(ip, PORT_VIDEO);
+                        break; // conexión exitosa
+                    } catch (Exception e) {
+                        intentos++;
+                        if (intentos >= 10) throw e;
+                    }
+                }
                 DataInputStream din = new DataInputStream(videoSocket.getInputStream());
 
                 while (isListening) {
