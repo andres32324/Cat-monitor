@@ -1,86 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="32dp"
     android:background="#1A1A2E">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="🎧"
-        android:textSize="64sp"
-        android:layout_marginBottom="8dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="MODO ESCUCHA"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="#FFFFFF"
-        android:layout_marginBottom="32dp"/>
-
-    <!-- IP Input -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="IP del teléfono junto al gato:"
-        android:textSize="14sp"
-        android:textColor="#AAAACC"
-        android:layout_marginBottom="8dp"/>
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="24dp">
 
-    <EditText
-        android:id="@+id/etIp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Ej: 192.168.1.15"
-        android:textColorHint="#555577"
-        android:textColor="#FFFFFF"
-        android:backgroundTint="#0F3460"
-        android:padding="12dp"
-        android:textSize="20sp"
-        android:inputType="text"
-        android:layout_marginBottom="24dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🎧"
+            android:textSize="48sp"
+            android:layout_marginBottom="4dp"/>
 
-    <!-- Volumen -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="🔊 Volumen"
-        android:textSize="14sp"
-        android:textColor="#AAAACC"
-        android:layout_marginBottom="4dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MODO ESCUCHA"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="16dp"/>
 
-    <SeekBar
-        android:id="@+id/seekVolume"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:progressTint="#E94560"
-        android:thumbTint="#E94560"
-        android:layout_marginBottom="24dp"/>
+        <!-- Video en vivo -->
+        <ImageView
+            android:id="@+id/ivVideo"
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:background="#000000"
+            android:scaleType="fitCenter"
+            android:layout_marginBottom="16dp"/>
 
-    <!-- Estado -->
-    <TextView
-        android:id="@+id/tvStatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Ingresa la IP y presiona Conectar"
-        android:textSize="14sp"
-        android:textColor="#CCCCFF"
-        android:gravity="center"
-        android:layout_marginBottom="24dp"
-        android:minHeight="60dp"/>
+        <!-- Estado -->
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ingresa la IP y presiona Conectar"
+            android:textSize="13sp"
+            android:textColor="#CCCCFF"
+            android:gravity="center"
+            android:layout_marginBottom="16dp"/>
 
-    <Button
-        android:id="@+id/btnToggle"
-        android:layout_width="220dp"
-        android:layout_height="60dp"
-        android:text="▶ Conectar"
-        android:textSize="18sp"
-        android:backgroundTint="#0F3460"
-        android:textColor="#FFFFFF"/>
+        <!-- IP Input -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="IP del teléfono junto al gato:"
+            android:textSize="13sp"
+            android:textColor="#AAAACC"
+            android:layout_marginBottom="6dp"/>
 
-</LinearLayout>
+        <EditText
+            android:id="@+id/etIp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ej: 192.168.1.15"
+            android:textColorHint="#555577"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#0F3460"
+            android:padding="12dp"
+            android:textSize="18sp"
+            android:inputType="text"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Volumen -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🔊 Volumen"
+            android:textSize="13sp"
+            android:textColor="#AAAACC"
+            android:layout_marginBottom="4dp"/>
+
+        <SeekBar
+            android:id="@+id/seekVolume"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:progressTint="#E94560"
+            android:thumbTint="#E94560"
+            android:layout_marginBottom="20dp"/>
+
+        <Button
+            android:id="@+id/btnToggle"
+            android:layout_width="220dp"
+            android:layout_height="56dp"
+            android:text="▶ Conectar"
+            android:textSize="16sp"
+            android:backgroundTint="#0F3460"
+            android:textColor="#FFFFFF"/>
+
+    </LinearLayout>
+</ScrollView>
