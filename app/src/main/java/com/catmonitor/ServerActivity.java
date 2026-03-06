@@ -9,16 +9,13 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.ImageReader;
 import android.media.MediaRecorder;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
 import android.os.Bundle;
-import android.content.Intent;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -40,12 +37,10 @@ public class ServerActivity extends AppCompatActivity {
     private static final int WIDTH = 640;
     private static final int HEIGHT = 480;
 
-    // Audio
     private AudioRecord audioRecord;
     private ServerSocket audioServerSocket;
     private Thread audioThread;
 
-    // Video
     private CameraDevice cameraDevice;
     private CameraCaptureSession captureSession;
     private ImageReader imageReader;
@@ -66,8 +61,8 @@ public class ServerActivity extends AppCompatActivity {
     private Button btnToggle;
     private Button btnSwitchCamera;
     private TextureView textureView;
-    private android.widget.CheckBox cbAudio;
-    private android.widget.CheckBox cbVideo;
+    private CheckBox cbAudio;
+    private CheckBox cbVideo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,15 +77,6 @@ public class ServerActivity extends AppCompatActivity {
         cbAudio         = findViewById(R.id.cbAudio);
         cbVideo         = findViewById(R.id.cbVideo);
 
-        // Servicio desactivado temporalmente
-        
-        //
-            
-        //
-            
-        }
-
-        // Obtener lista de cámaras disponibles
         try {
             CameraManager manager = (CameraManager) getSystemService(CAMERA_SERVICE);
             cameraIds = manager.getCameraIdList();
@@ -98,7 +84,6 @@ public class ServerActivity extends AppCompatActivity {
             cameraIds = new String[]{"0"};
         }
 
-        // Ocultar botón si solo hay una cámara
         if (cameraIds.length <= 1) btnSwitchCamera.setVisibility(android.view.View.GONE);
 
         tvIp.setText("IP: " + GetIP.getLocalIP() + "\nPuertos: " + PORT_AUDIO + " / " + PORT_VIDEO);
@@ -115,10 +100,8 @@ public class ServerActivity extends AppCompatActivity {
         if (!isStreaming) {
             currentCameraIndex = (currentCameraIndex + 1) % cameraIds.length;
             btnSwitchCamera.setText(currentCameraIndex == 0 ? "📷 Frontal" : "📷 Trasera");
-            Toast.makeText(this, currentCameraIndex == 0 ? "Cámara trasera" : "Cámara frontal", Toast.LENGTH_SHORT).show();
             return;
         }
-        // Si está transmitiendo, reinicia la cámara
         try {
             if (captureSession != null) { captureSession.close(); captureSession = null; }
             if (cameraDevice != null) { cameraDevice.close(); cameraDevice = null; }
@@ -134,7 +117,10 @@ public class ServerActivity extends AppCompatActivity {
         String[] perms = {Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA};
         boolean allGranted = true;
         for (String p : perms)
-            if (ContextCompat.checkSelfPermission(this, p) != PackageManager.PERMISSION_GRANTED) { allGranted = false; break; }
+            if (ContextCompat.checkSelfPermission(this, p) != PackageManager.PERMISSION_GRANTED) {
+                allGranted = false;
+                break;
+            }
         if (!allGranted) ActivityCompat.requestPermissions(this, perms, PERMISSION_CODE);
         else startStreaming();
     }
@@ -159,7 +145,7 @@ public class ServerActivity extends AppCompatActivity {
         startBackgroundThread();
         if (sendAudio) startAudioServer();
         if (sendVideo) startCamera();
-        else tvStatus.setText("🟡 Esperando cliente (solo audio)...");
+        if (!sendAudio && !sendVideo) tvStatus.setText("⚠️ Selecciona al menos una opción");
     }
 
     // ───────── AUDIO ─────────
