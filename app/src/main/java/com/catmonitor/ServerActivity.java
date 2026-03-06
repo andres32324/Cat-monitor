@@ -82,12 +82,12 @@ public class ServerActivity extends AppCompatActivity {
         cbAudio         = findViewById(R.id.cbAudio);
         cbVideo         = findViewById(R.id.cbVideo);
 
-        // Iniciar foreground service para segundo plano
-        Intent serviceIntent = new Intent(this, AudioStreamService.class);
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            startForegroundService(serviceIntent);
-        } else {
-            startService(serviceIntent);
+        // Servicio desactivado temporalmente
+        
+        //
+            
+        //
+            
         }
 
         // Obtener lista de cámaras disponibles
